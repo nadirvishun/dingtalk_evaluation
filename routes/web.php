@@ -14,3 +14,5 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+$router->get('example/index','ExampleController@index');
+$router->get('example/create','ExampleController@create');
