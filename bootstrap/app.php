@@ -23,6 +23,15 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
+/*
+ * 配置日志文件为每日
+ */
+$app->configureMonologUsing(function(Monolog\Logger $monoLog) use ($app){
+    return $monoLog->pushHandler(
+        new \Monolog\Handler\RotatingFileHandler($app->storagePath().'/logs/lumen.log',10)
+    );
+});
+
 $app->withFacades();
 
 $app->withEloquent();
