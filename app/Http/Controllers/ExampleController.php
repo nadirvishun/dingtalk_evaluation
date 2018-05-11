@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use EasyDingTalk\Kernel\BaseClient;
 use Illuminate\Http\Request;
 use App\Example;
 use Validator;
@@ -11,7 +12,7 @@ use EasyDingTalk\Jssdk\ConfigBuilder;
 
 class ExampleController extends Controller
 {
-    //
+    //展示数据
     public function index()
     {
         // $info=Example::select('name')->get();
@@ -73,22 +74,43 @@ class ExampleController extends Controller
      */
     public function dingtalk()
     {
+        $corpId = env('CORP_ID');
+        $corpSecret = env('CORP_SECRET');
+        $agentId=env('AGENT_ID');
         //前端赋值
         $options = [
-            'corp_id' => 'dingf37ed417a743f896',
-            'corp_secret' => 'Cx1fDyF_oNZ6mzxgBPelJYTlkWF_eOU8h8-0_WZfuKB7W4G6SEvV11BdWPoQVPK9',
+            'corp_id' => $corpId,
+            'corp_secret' => $corpSecret,
         ];
         $app = new Application($options);
         //调用组装配置类获取组装结果
         $config = new ConfigBuilder($app->jssdk);
-        $ddConfig = $config->useApi([
-            'runtime.info',
+        $ddConfig = $config->ofAgent($agentId)->useApi([
             'biz.user.get',
             'biz.contact.choose',
-            'biz.telephone.call',
-            'biz.ding.post'
-        ])->toJson();
+            'biz.contact.complexPicker',
+            'biz.contact.departmentsPicker'
+        ])->toArray();
 
-        return view('example.dingtalk',['ddConfig'=>$ddConfig]);
+        return view('example.dingtalk', ['ddConfig' => $ddConfig]);
+    }
+
+    /**
+     * 获取用户身份
+     */
+    public function getUserInfo(Request $request)
+    {
+        $corpId = env('CORP_ID');
+        $corpSecret = env('CORP_SECRET');
+        //前端赋值
+        $options = [
+            'corp_id' => $corpId,
+            'corp_secret' => $corpSecret,
+        ];
+        $app = new Application($options);
+        $baseClient = new BaseClient($app);
+        $code = $request->input('code');
+        $result = $baseClient->httpGet('user/getuserinfo', ['code' => $code]);
+        return $result;
     }
 }
