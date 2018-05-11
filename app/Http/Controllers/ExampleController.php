@@ -75,8 +75,8 @@ class ExampleController extends Controller
     {
         //前端赋值
         $options = [
-            'corp_id' => 'ding1234567890',
-            'corp_secret' => 'chpHdUyCOm3NwkxnnOenCnppsSmEr',
+            'corp_id' => 'dingf37ed417a743f896',
+            'corp_secret' => 'Cx1fDyF_oNZ6mzxgBPelJYTlkWF_eOU8h8-0_WZfuKB7W4G6SEvV11BdWPoQVPK9',
         ];
         $app = new Application($options);
         //调用组装配置类获取组装结果
