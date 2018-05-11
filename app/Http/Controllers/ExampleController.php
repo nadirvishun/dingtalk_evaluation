@@ -6,19 +6,11 @@ use Illuminate\Http\Request;
 use App\Example;
 use Validator;
 use Log;
+use EasyDingTalk\Application;
+use EasyDingTalk\Jssdk\ConfigBuilder;
 
 class ExampleController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     //
     public function index()
     {
@@ -40,9 +32,9 @@ class ExampleController extends Controller
     {
         if ($request->isMethod('post')) {
             //验证数据有效性,如果出错，会自动抛出json格式的错误（只能是json格式的）
-           /* $this->validate($request, [
-                'name' => 'bail|required|min:3'
-            ]);*/
+            /* $this->validate($request, [
+                 'name' => 'bail|required|min:3'
+             ]);*/
             $name = $request->input('name');
 
             //自定义数据验证
@@ -54,7 +46,7 @@ class ExampleController extends Controller
                 'name' => 'bail|required|min:3'
             ]);
             if ($validator->fails()) {
-                $errors=$validator->errors();
+                $errors = $validator->errors();
                 /*foreach($errors->all() as $error){
                     return $error;
                 }*/
@@ -74,5 +66,29 @@ class ExampleController extends Controller
         } else {
             return view('example.create');
         }
+    }
+
+    /**
+     * 测试钉钉相关
+     */
+    public function dingtalk()
+    {
+        //前端赋值
+        $options = [
+            'corp_id' => 'ding1234567890',
+            'corp_secret' => 'chpHdUyCOm3NwkxnnOenCnppsSmEr',
+        ];
+        $app = new Application($options);
+        //调用组装配置类获取组装结果
+        $config = new ConfigBuilder($app->jssdk);
+        $ddConfig = $config->useApi([
+            'runtime.info',
+            'biz.user.get',
+            'biz.contact.choose',
+            'biz.telephone.call',
+            'biz.ding.post'
+        ])->toJson();
+
+        return view('example.dingtalk',['ddConfig'=>$ddConfig]);
     }
 }

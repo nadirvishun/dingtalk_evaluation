@@ -17,3 +17,4 @@ $router->get('/', function () use ($router) {
 $router->get('example/index','ExampleController@index');
 $router->get('example/create','ExampleController@create');
 $router->post('example/create','ExampleController@create');
+$router->get('example/dingtalk','ExampleController@dingtalk');
